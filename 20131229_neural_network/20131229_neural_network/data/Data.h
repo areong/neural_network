@@ -5,6 +5,11 @@ class Data {
 public:
     Data();
     ~Data();
+    /*
+        Initialize.
+        param numItem: Set the number of items in Data.
+     */
+    void initialize(int numItem);
 };
 
 #endif
