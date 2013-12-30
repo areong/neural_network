@@ -19,9 +19,6 @@ int FileReader::read(char *fileName, Data *data) {
     // Count number of lines in file.
     if (!isSetNumLine)
         countNumLine(fileName);
-    
-    // Initialize Data object.
-    data = new Data();
 
     // Open file.
     ifstream file(fileName);    
@@ -46,6 +43,9 @@ void FileReader::setNumLine(int numLine) {
  * -------------------- */
 
 void FileReader::readAtEachLineFor102MLFinal(string *line, Data *data) {
+    // Start adding one item.
+    data->startAddingOneItem();
+
     // y
     char bufferY[4];
     int numDigitY = line->find(" ");
@@ -61,6 +61,9 @@ void FileReader::readAtEachLineFor102MLFinal(string *line, Data *data) {
         // and the warning will disappear.
         line->copy(bufferY, numDigitY);
         y = atoi(bufferY);
+
+        // Add y.
+        data->add_y(y);
     }
 
     // i:x_i
@@ -84,6 +87,9 @@ void FileReader::readAtEachLineFor102MLFinal(string *line, Data *data) {
             x_i = atof(bufferX_I);
         }
 
+        // Add i and x_i
+        data->add_i_and_x_i(i, x_i);
+
         // It is the last x_i component.
         if (line->find(" ", positionStartSpace + 1) == string::npos) {
             break;
@@ -94,6 +100,9 @@ void FileReader::readAtEachLineFor102MLFinal(string *line, Data *data) {
             positionStartSpace += numDigitI + numDigitX_I + 2;
         }
     }
+
+    // Finish adding one item.
+    data->finishAddingOneItem();
 }
 
 void FileReader::countNumLine(char *fileName) {
