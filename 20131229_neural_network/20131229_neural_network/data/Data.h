@@ -1,15 +1,20 @@
 #ifndef DATA_DATA_H_
 #define DATA_DATA_H_
 
+#include "../utils/list/List.h"
+
+class DataItem;
+
 class Data {
 public:
     Data();
     ~Data();
+
+private:
     /*
-        Initialize.
-        param numItem: Set the number of items in Data.
+        Rows of data.
      */
-    void initialize(int numItem);
+    List<DataItem *> *dataRows;
 };
 
 #endif

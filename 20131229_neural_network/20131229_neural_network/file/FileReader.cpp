@@ -21,7 +21,7 @@ int FileReader::read(char *fileName, Data *data) {
         countNumLine(fileName);
     
     // Initialize Data object.
-    data->initialize(numLine);
+    data = new Data();
 
     // Open file.
     ifstream file(fileName);    
