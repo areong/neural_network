@@ -14,6 +14,7 @@ public:
     void removeByIndex(int index);
     T get(int index);
     int getIndex(T t);
+    void set(int index, T newT);
     int getLength();
 private:
     T *list;
@@ -105,6 +106,13 @@ int ListByArray<T>::getIndex(T t) {
     }
     // Not found, return -1.
     return -1;
+}
+
+template <class T>
+void ListByArray<T>::set(int index, T newT) {
+    // If index valid 
+    if (index >= 0 && index < lengthValid)
+        list[index] = newT;
 }
 
 template <class T>

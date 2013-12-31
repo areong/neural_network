@@ -15,6 +15,7 @@ public:
     virtual void removeByIndex(int index) = 0;
     virtual T get(int index) = 0;
     virtual int getIndex(T t) = 0;
+    virtual void set(int index, T newT) = 0;
     virtual int getLength() = 0;
 };
 

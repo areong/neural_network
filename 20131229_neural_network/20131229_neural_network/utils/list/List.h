@@ -15,6 +15,7 @@ public:
     void removeByIndex(int index);
     T get(int index);
     int getIndex(T t);
+    void set(int index, T newT);
     int getLength();
 private:
     ListByArray<T> *listReal;
@@ -55,6 +56,11 @@ T List<T>::get(int index) {
 template <class T>
 int List<T>::getIndex(T t) {
     return listReal->getIndex(t);
+}
+
+template <class T>
+void List<T>::set(int index, T newT) {
+    listReal->set(index, newT);
 }
 
 template <class T>
