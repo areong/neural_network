@@ -5,13 +5,9 @@
 
 class HyperbolicTangent : public IActivationFunction {
 public:
+    HyperbolicTangent();
     ~HyperbolicTangent();
     double activate(double input);
-    static HyperbolicTangent *getInstance();
-
-private:
-    HyperbolicTangent();
-    static HyperbolicTangent *instance;
 };
 
 #endif

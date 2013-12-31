@@ -14,7 +14,7 @@ Neuron::Neuron() {
 
     frontNeurons = new List<Neuron *>();
 
-    activationFunction = HyperbolicTangent::getInstance();
+    activationFunction = new HyperbolicTangent();
 }
 
 Neuron::~Neuron() {
