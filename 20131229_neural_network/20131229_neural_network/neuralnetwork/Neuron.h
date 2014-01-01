@@ -18,7 +18,7 @@ public:
             f( weighted sum + threshold ),
             f is the activation function.
         If no front neurons (like input neurons)
-		or no activation function is set,
+        or no activation function is set,
         return the previously set output (default is zero).
      */
     double getOutput();
