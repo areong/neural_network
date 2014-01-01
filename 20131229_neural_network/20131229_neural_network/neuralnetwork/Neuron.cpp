@@ -23,17 +23,21 @@ Neuron::~Neuron() {
 }
 
 double Neuron::getOutput() {
-    if (frontNeurons->getLength() > 0 && activationFunction != 0) {
-        weightedSum = 0;
-        for (int i = 0; i < frontNeurons->getLength(); i++)
-            weightedSum += weights->get(i) * frontNeurons->get(i)->getOutput();
-        output = activationFunction->activate(weightedSum + threshould);
-    }
+    calculateOutput();
     return output;
 }
 
 double Neuron::getStoredOutputWithoutCalculation() {
     return output;
+}
+
+void Neuron::calculateOutput() {
+    if (frontNeurons->getLength() > 0 && activationFunction != 0) {
+        weightedSum = 0;
+        for (int i = 0; i < frontNeurons->getLength(); i++)
+            weightedSum += weights->get(i) * frontNeurons->get(i)->getStoredOutputWithoutCalculation();
+        output = activationFunction->activate(weightedSum + threshould);
+    }
 }
 
 void Neuron::setOutput(double output) {

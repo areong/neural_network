@@ -17,6 +17,8 @@ public:
         Calculate and return output:
             f( weighted sum + threshold ),
             f is the activation function.
+        It uses the stored output of front neurons
+        and won't let them to calculate again.
         If no front neurons (like input neurons)
         or no activation function is set,
         return the previously set output (default is zero).
@@ -27,6 +29,12 @@ public:
         Used in backpropagation.
      */
     double getStoredOutputWithoutCalculation();
+    /*
+        Calculate output.
+        It's the same as getOutput() excepting
+        not returning anything.
+     */
+    void calculateOutput();
     /*
         Set the output. Used in the input layer.
      */
