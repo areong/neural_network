@@ -82,7 +82,7 @@ void Neuron::setWeightsRandomly() {
 }
 
 void Neuron::lockWeights(bool lock) {
-    weightsLocked = true;
+    weightsLocked = lock;
 }
 
 bool Neuron::isWeightsLocked() {
@@ -91,14 +91,20 @@ bool Neuron::isWeightsLocked() {
 
 void Neuron::addFrontNeuron(Neuron *neuron) {
     frontNeurons->add(neuron);
+    weights->add(0);
 }
 
 void Neuron::removeFrontNeuron(Neuron *neuron) {
-    frontNeurons->remove(neuron);
+    int index = frontNeurons->getIndex(neuron);
+    if (index >= 0) {
+        frontNeurons->remove(neuron);
+        weights->removeByIndex(index);
+    }
 }
 
 void Neuron::removeFrontNeuronByIndex(int index) {
     frontNeurons->removeByIndex(index);
+    weights->removeByIndex(index);
 }
 
 int Neuron::getNumFrontNeurons() {
