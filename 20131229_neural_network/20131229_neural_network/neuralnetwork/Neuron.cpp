@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include "activationfunction\HyperbolicTangent.h"
+#include "activationfunction\IActivationFunction.h"
 
 Neuron::Neuron() {
     output = 0;
@@ -14,7 +14,7 @@ Neuron::Neuron() {
 
     frontNeurons = new List<Neuron *>();
 
-    activationFunction = new HyperbolicTangent();
+    activationFunction = 0;
 }
 
 Neuron::~Neuron() {
@@ -23,7 +23,7 @@ Neuron::~Neuron() {
 }
 
 double Neuron::getOutput() {
-    if (frontNeurons->getLength() > 0) {
+    if (frontNeurons->getLength() > 0 && activationFunction != 0) {
         weightedSum = 0;
         for (int i = 0; i < frontNeurons->getLength(); i++)
             weightedSum += weights->get(i) * frontNeurons->get(i)->getOutput();
