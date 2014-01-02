@@ -4,6 +4,7 @@
 #include "../utils/list/List.h"
 
 class IActivationFunction;
+class INeuronAdditionalData;
 
 class Neuron {
 public:
@@ -85,6 +86,12 @@ public:
      */
     void setActivationFunction(IActivationFunction *function);
 
+    /*
+        Set instance to store additional data if needed.
+     */
+    void setAdditionalData(INeuronAdditionalData *additionalData);
+    INeuronAdditionalData *getAdditionalData();
+
 private:
     double output;
     double weightedSum;
@@ -96,6 +103,8 @@ private:
     List<Neuron *> *frontNeurons;
 
     IActivationFunction *activationFunction;
+
+    INeuronAdditionalData *additionalData;
 };
 
 #endif

@@ -1,0 +1,7 @@
+#ifndef NEURALNETWORK_INEURONADDITIONALDATA_H_
+#define NEURALNETWORK_INEURONADDITIONALDATA_H_
+
+class INeuronAdditionalData {
+};
+
+#endif
