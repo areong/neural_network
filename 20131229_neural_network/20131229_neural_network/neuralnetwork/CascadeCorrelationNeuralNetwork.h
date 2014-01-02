@@ -13,6 +13,11 @@ public:
     ~CascadeCorrelationNeuralNetwork();
 
     void initialize(int numInputs, int numOutputs);
+    /*
+        Set the learning rate.
+        It is only used in the first cycle where normal backprop is used
+        instead of Quickprop.
+     */
     void setLearningRate(double learningRate);
     void setMaxNumHiddenLayers(int numLayers);
     /*
