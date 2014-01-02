@@ -19,10 +19,13 @@ int main(int argc, char *argv[]) {
 
     CascadeCorrelationNeuralNetwork *network = new CascadeCorrelationNeuralNetwork();
     network->initialize(12810, 12);
+    cout << "initialize complete" << endl;
     network->setMaxNumHiddenLayers(0);
     network->setPatience(196);
     network->setTrainingData(dataTrain);
+    cout << "set complete" << endl;
     network->run();
+    cout << "run complete" << endl;
 
     system("pause");
     return 0;

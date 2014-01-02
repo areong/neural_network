@@ -59,3 +59,11 @@ double Data::get_x_i_byIndexAnd_i(int index, int i) {
     // DataItem::get_x_i_by_i(int i) returns 0 if x_i not found.
     return dataItems->get(index)->get_x_i_by_i(i);
 }
+
+void Data::addDataItem(DataItem *dataItem) {
+    dataItems->add(dataItem);
+}
+
+DataItem *Data::getDataItem(int index) {
+    return dataItems->get(index);
+}

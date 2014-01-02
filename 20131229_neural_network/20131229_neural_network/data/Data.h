@@ -37,6 +37,9 @@ public:
     int getNumItems();
     double get_y_byIndex(int index);
     double get_x_i_byIndexAnd_i(int index, int i);
+
+    void addDataItem(DataItem *dataItem);
+    DataItem *getDataItem(int index);
     
 private:
     /*
