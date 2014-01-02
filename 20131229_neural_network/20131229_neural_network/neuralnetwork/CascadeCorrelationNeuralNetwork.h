@@ -27,10 +27,12 @@ public:
      */
     void setPatience(int numTrainingCycles);
     void setTrainingData(Data *trainingData);
-    void run();    
+    void run();
+
+    double calculateCorrectRate(Data *data);
 
 private:
-    void feedInputs();
+    void feedInputs(Data *data, int index);
     void setCorrectOutputs();
     /*
         For example, change y = 3 to (0,0,1,0,0,0,0,0,0,0,0,0).

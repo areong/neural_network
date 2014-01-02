@@ -72,7 +72,7 @@ void CascadeCorrelationNeuralNetwork::run() {
     while (!goalReached) {
         // If within patience.
         if (numTrainingCycles < patience) {
-            feedInputs();
+            feedInputs(trainingData, currentIndexTrainingData);
             setCorrectOutputs();
             feedForward();
             backPropagate();
@@ -95,14 +95,40 @@ void CascadeCorrelationNeuralNetwork::run() {
     }
 }
 
+double CascadeCorrelationNeuralNetwork::calculateCorrectRate(Data *data) {
+    int countCorrect = 0;
+    // For each data item.
+    for (int i = 0; i < data->getNumItems(); i++) {
+        // Calculate output.
+        feedInputs(data, i);
+        feedForward();
+
+        // Find output Neuron with the largest output.
+        int outputMax = 0;
+        int indexChosenOutputNeuron;
+        for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
+            Neuron *outputNeuron = neuralNetwork->getOutputNeuron(j);
+            if (outputNeuron->getStoredOutputWithoutCalculation() > outputMax) {
+                outputMax = outputNeuron->getStoredOutputWithoutCalculation();
+                indexChosenOutputNeuron = j;                   
+            }
+        }
+
+        // If correct.
+        if (indexChosenOutputNeuron + 1 == data->get_y_byIndex(i))
+            countCorrect += 1;
+    }
+    return (double)countCorrect / (double)(data->getNumItems());
+}
+
 /*
     Private:
  */
 
-void CascadeCorrelationNeuralNetwork::feedInputs() {
+void CascadeCorrelationNeuralNetwork::feedInputs(Data *data, int index) {
     for (int i = 0; i < neuralNetwork->getNumInputNeurons(); i++)
         neuralNetwork->getInputNeuron(i)->setOutput(
-            trainingData->get_x_i_byIndexAnd_i(currentIndexTrainingData, i));
+            data->get_x_i_byIndexAnd_i(index, i));
 }
 
 void CascadeCorrelationNeuralNetwork::setCorrectOutputs() {
