@@ -58,6 +58,17 @@ void Neuron::setThreshold(double threshould) {
     this->threshould = threshould;
 }
 
+double Neuron::getWeight(int index) {
+    return weights->get(index);
+}
+
+void Neuron::setWeight(int index, double weight) {
+    if (!weightsLocked){
+        if (index >= 0)
+            weights->set(index, weight);
+    }
+}
+
 void Neuron::setWeightByAFrontNeuron(Neuron *neuron, double weight) {
     if (!weightsLocked){
         // Find index.
@@ -113,12 +124,20 @@ void Neuron::removeFrontNeuronByIndex(int index) {
     weights->removeByIndex(index);
 }
 
+Neuron *Neuron::getFrontNeuron(int index) {
+    return frontNeurons->get(index);
+}
+
 int Neuron::getNumFrontNeurons() {
     return frontNeurons->getLength();
 }
 
 void Neuron::setActivationFunction(IActivationFunction *function) {
     activationFunction = function;
+}
+
+IActivationFunction *Neuron::getActivationFunction() {
+    return activationFunction;
 }
 
 void Neuron::setAdditionalData(INeuronAdditionalData *additionalData) {

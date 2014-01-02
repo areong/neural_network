@@ -53,6 +53,8 @@ public:
      */
     void setThreshold(double threshould);
     
+    double getWeight(int index);
+    void setWeight(int index, double weight);
     /*
         Set the weight to a front neuron given.
         Used in updating weights.
@@ -78,6 +80,7 @@ public:
     void addFrontNeuron(Neuron *neuron);
     void removeFrontNeuron(Neuron *neuron);
     void removeFrontNeuronByIndex(int index);
+    Neuron *getFrontNeuron(int index);
     int getNumFrontNeurons();
 
     /*
@@ -85,6 +88,7 @@ public:
         If not set, no calculation will be done when getting output.
      */
     void setActivationFunction(IActivationFunction *function);
+    IActivationFunction *getActivationFunction();
 
     /*
         Set instance to store additional data if needed.
