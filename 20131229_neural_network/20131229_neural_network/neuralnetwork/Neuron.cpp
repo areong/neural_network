@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "activationfunction\IActivationFunction.h"
-#include "neuronadditionaldata\INeuronAdditionalData.h"
+#include "neuronadditionaldata\NeuronAdditionalData.h"
 
 Neuron::Neuron() {
     output = 0;
@@ -140,12 +140,12 @@ IActivationFunction *Neuron::getActivationFunction() {
     return activationFunction;
 }
 
-void Neuron::setAdditionalData(INeuronAdditionalData *additionalData) {
+void Neuron::setAdditionalData(NeuronAdditionalData *additionalData) {
     if (this->additionalData != 0)
         delete this->additionalData;
     this->additionalData = additionalData;
 }
 
-INeuronAdditionalData *Neuron::getAdditionalData() {
+NeuronAdditionalData *Neuron::getAdditionalData() {
     return additionalData;
 }

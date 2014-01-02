@@ -1,14 +1,12 @@
 #ifndef NEURALNETWORK_NEURONADDITIONALDATAQUICKPROP_H_
 #define NEURALNETWORK_NEURONADDITIONALDATAQUICKPROP_H_
 
-#include "INeuronAdditionalData.h"
-
 #include "../../utils/list/List.h"
 
-class NeuronAdditionalDataQuickprop : public INeuronAdditionalData {
+class NeuronAdditionalData {
 public:
-    NeuronAdditionalDataQuickprop();
-    ~NeuronAdditionalDataQuickprop();
+    NeuronAdditionalData();
+    ~NeuronAdditionalData();
 
     /*
         Initialize 2 List to all zero.
