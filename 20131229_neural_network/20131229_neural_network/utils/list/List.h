@@ -13,6 +13,7 @@ public:
     void add(T t);
     void remove(T t);
     void removeByIndex(int index);
+    void clear();
     T get(int index);
     int getIndex(T t);
     void set(int index, T newT);
@@ -46,6 +47,11 @@ void List<T>::remove(T t) {
 template <class T>
 void List<T>::removeByIndex(int index) {
     listReal->removeByIndex(index);
+}
+
+template <class T>
+void List<T>::clear() {
+    listReal->clear();
 }
 
 template <class T>

@@ -12,6 +12,7 @@ public:
     void add(T t);
     void remove(T t);
     void removeByIndex(int index);
+    void clear();
     T get(int index);
     int getIndex(T t);
     void set(int index, T newT);
@@ -84,6 +85,11 @@ void ListByArray<T>::removeByIndex(int index) {
             list[i] = list[i+1];
         lengthValid -= 1;
     }
+}
+
+template <class T>
+void ListByArray<T>::clear() {
+    lengthValid = 0;
 }
 
 template <class T>
