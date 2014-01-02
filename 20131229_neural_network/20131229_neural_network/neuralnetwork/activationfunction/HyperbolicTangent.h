@@ -8,6 +8,7 @@ public:
     HyperbolicTangent();
     ~HyperbolicTangent();
     double activate(double input);
+    double derivative(double input);
 };
 
 #endif
