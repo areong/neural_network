@@ -14,8 +14,8 @@ void NeuronAdditionalData::setNumWeights(int numWeights) {
     dEdwLastCycle->clear();
     dwLastCycle->clear();
     for (int i = 0; i < numWeights; i++) {
-        dEdwLastCycle->add(0);
-        dwLastCycle->add(0);
+        dEdwLastCycle->add(1);
+        dwLastCycle->add(1);
     }
 }
 
@@ -33,4 +33,20 @@ double NeuronAdditionalData::getdwLastCycle(int index) {
 
 void NeuronAdditionalData::setdwLastCycle(int index, double dw) {
     dwLastCycle->set(index, dw);
+}
+
+double NeuronAdditionalData::getdEdThresholdLastCycle() {
+    return dEdThresholdLastCycle;
+}
+
+void NeuronAdditionalData::setdEdThresholdLastCycle(double dEdThreshold) {
+    dEdThresholdLastCycle = dEdThreshold;
+}
+
+double NeuronAdditionalData::getdThresholdLastCycle() {
+    return dThresholdLastCycle;
+}
+
+void NeuronAdditionalData::setdThresholdLastCycle(double dThreshold) {
+    dThresholdLastCycle = dThreshold;
 }

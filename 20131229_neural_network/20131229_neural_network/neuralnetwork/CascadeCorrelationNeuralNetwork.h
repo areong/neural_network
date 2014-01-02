@@ -33,19 +33,20 @@ public:
 
 private:
     void feedInputs(Data *data, int index);
-    void setCorrectOutputs();
+    void setCorrectOutputs(Data *data, int index);
     /*
         For example, change y = 3 to (0,0,1,0,0,0,0,0,0,0,0,0).
      */
-    void setCorrectOutputsForMLFinal();
+    void setCorrectOutputsForMLFinal(Data *data, int index);
 
     void feedForward();
     void backPropagate();
+    void backPropagateByTraditionalBackprop();
     void backPropagateByQuickprop();
     /*
         Add a hidden layer, the core of the algorithm.
      */
-    void addHidderLayer();
+    void addHiddenLayer();
 
     NeuralNetwork *neuralNetwork;
     HyperbolicTangent *activationFunction;

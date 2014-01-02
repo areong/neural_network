@@ -85,16 +85,18 @@ void Neuron::setWeightsAllZero() {
         if (weights->getLength() > 0)
             for (int i = 0; i < weights->getLength(); i++)
                 weights->set(i, 0);
+        threshould = 0;
     }
 }
 
 void Neuron::setWeightsRandomly() {
     if (!weightsLocked){
+        srand(time(NULL));
         if (weights->getLength() > 0)
-            for (int i = 0; i < weights->getLength(); i++) {
-                srand(time(NULL));
-                weights->set(i, rand() * 2 / RAND_MAX - 1);
+            for (int i = 0; i < weights->getLength(); i++) {                
+                weights->set(i, rand() * 2 / (double)RAND_MAX - 1);
             }
+        threshould = rand() * 2 / (double)RAND_MAX - 1;
     }
 }
 
