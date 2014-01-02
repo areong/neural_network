@@ -7,8 +7,7 @@ using namespace std;
 #include "../data/Data.h"
 
 FileReader::FileReader() {
-    numLine = 0;
-    isSetNumLine = false;
+    numLineToRead = 0;
 }
 
 FileReader::~FileReader() {
@@ -16,26 +15,25 @@ FileReader::~FileReader() {
 }
 
 int FileReader::read(char *fileName, Data *data) {
-    // Count number of lines in file.
-    if (!isSetNumLine)
-        countNumLine(fileName);
-
     // Open file.
     ifstream file(fileName);    
     if (file.is_open()) {
+        int countLine = 0;
         string line;
-        while (getline(file, line)) {
+        while (getline(file, line)) {    
             // Each line.
             readAtEachLineFor102MLFinal(&line, data);
+            countLine += 1;
+            if (countLine >= numLineToRead)
+                break;
         }
         file.close();
     }
     return 0;
 }
 
-void FileReader::setNumLine(int numLine) {
-    this->numLine = numLine;
-    isSetNumLine = true;
+void FileReader::setNumLineToRead(int numLine) {
+    this->numLineToRead = numLine;
 }
 
 /* --------------------
@@ -106,14 +104,14 @@ void FileReader::readAtEachLineFor102MLFinal(string *line, Data *data) {
 }
 
 void FileReader::countNumLine(char *fileName) {
-    numLine = 0;
+    numLineToRead = 0;
     
     // Open file.
     ifstream file(fileName);
     if (file.is_open()) {
         string line;
         while (getline(file, line)) {
-            numLine++;
+            numLineToRead++;
         }
         file.close();
     }

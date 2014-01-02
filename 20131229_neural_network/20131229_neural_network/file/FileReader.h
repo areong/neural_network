@@ -13,21 +13,17 @@ public:
     int read(char *fileName, Data *data);
 
     /*
-        Set number of lines in file.
+        Set number of lines to be read in file.
      */
-    void setNumLine(int numLine);
+    void setNumLineToRead(int numLine);
 
 private:
     void readAtEachLineFor102MLFinal(string *line, Data *data);
 
     /*
-        Number of lines in file.
+        Number of lines to be read in file.
      */
-    int numLine;
-    /*
-        Whether setNumLine() is called.
-     */
-    bool isSetNumLine;
+    int numLineToRead;
     /*
         Count the number of lines in file.
         Direct modifies the private attribute numLine.

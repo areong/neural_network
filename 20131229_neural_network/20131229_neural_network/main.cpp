@@ -12,12 +12,10 @@ int main(int argc, char *argv[]) {
 
     FileReader *fileReader = new FileReader();
     Data *dataTrain = new Data();
-    fileReader->setNumLine(196);
+    fileReader->setNumLineToRead(10);
     fileReader->read(fileNameTrain, dataTrain);
 
-    for (int i = 0; i < 10000; i++) {
-        cout << i << '\t' << dataTrain->get_x_i_byIndexAnd_i(0, i) << endl;
-    }
+    cout << dataTrain->getNumItems() << endl;
 
     CascadeCorrelationNeuralNetwork *network = new CascadeCorrelationNeuralNetwork();
     network->initialize(12810, 12);
