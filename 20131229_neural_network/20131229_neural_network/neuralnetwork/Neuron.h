@@ -81,6 +81,7 @@ public:
     void removeFrontNeuron(Neuron *neuron);
     void removeFrontNeuronByIndex(int index);
     Neuron *getFrontNeuron(int index);
+    int getFrontNeuronIndex(Neuron *neuron);
     int getNumFrontNeurons();
 
     /*

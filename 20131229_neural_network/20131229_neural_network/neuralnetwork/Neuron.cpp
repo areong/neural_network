@@ -130,6 +130,10 @@ Neuron *Neuron::getFrontNeuron(int index) {
     return frontNeurons->get(index);
 }
 
+int Neuron::getFrontNeuronIndex(Neuron *neuron) {
+    return frontNeurons->getIndex(neuron);
+}
+
 int Neuron::getNumFrontNeurons() {
     return frontNeurons->getLength();
 }

@@ -43,6 +43,8 @@ private:
     void backPropagate();
     void backPropagateByTraditionalBackprop();
     void backPropagateByQuickprop();
+    double calculate_dw_byTraditionalBackprop(double dEdw);
+    double calculate_dw_byQuickprop(double dEdw, double dEdwLastCycle, double dwLastCycle);
     /*
         Add a hidden layer, the core of the algorithm.
      */
