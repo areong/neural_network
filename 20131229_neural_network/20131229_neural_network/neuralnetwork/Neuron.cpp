@@ -5,7 +5,7 @@
 #include "activationfunction\IActivationFunction.h"
 #include "neuronadditionaldata\NeuronAdditionalData.h"
 
-Neuron::Neuron() {
+Neuron::Neuron(IActivationFunction *activationFunction) {
     output = 0;
     weightedSum = 0;
     threshould = 0;
@@ -15,7 +15,7 @@ Neuron::Neuron() {
 
     frontNeurons = new List<Neuron *>();
 
-    activationFunction = 0;
+    this->activationFunction = activationFunction;
 }
 
 Neuron::~Neuron() {

@@ -32,19 +32,15 @@ void CascadeCorrelationNeuralNetwork::initialize(int numInputs, int numOutputs) 
     // Input layer.
     for (int i = 0; i < numInputs; i++) {
         // Create Neuron.
-        Neuron *neuron = new Neuron();
-        // Do not needs activation function and additional data.
+        Neuron *neuron = new Neuron(activationFunction);
         // Add the Neuron.
         neuralNetwork->addInputNeuron(neuron);
     }
     // Output layer.
     for (int i = 0; i < numOutputs; i++) {
         // Create Neuron.
-        Neuron *neuron = new Neuron();
-
-        // Set activation function.
-        neuron->setActivationFunction(activationFunction);
-        
+        Neuron *neuron = new Neuron(activationFunction);
+                
         // Link to all input Neurons.
         neuralNetwork->linkNeuronInputsToAllInputNeurons(neuron);
 
@@ -347,10 +343,7 @@ void CascadeCorrelationNeuralNetwork::backPropagateByQuickprop() {
  
 void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
     // Create a Neuron.
-    Neuron *neuron = new Neuron();
-
-    // Set activation function.
-    neuron->setActivationFunction(activationFunction);
+    Neuron *neuron = new Neuron(activationFunction);
     
     // Link to all existing Neurons except for output Neurons.
     neuralNetwork->linkNeuronInputsToAllInputNeurons(neuron);

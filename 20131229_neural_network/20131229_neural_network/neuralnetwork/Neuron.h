@@ -8,7 +8,7 @@ class NeuronAdditionalData;
 
 class Neuron {
 public:
-    Neuron();
+    Neuron(IActivationFunction *activationFunction);
     /*
         Deconstructor. Do not delete front Neurons.
      */
