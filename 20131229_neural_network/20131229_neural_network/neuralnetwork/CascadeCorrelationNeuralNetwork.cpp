@@ -51,7 +51,7 @@ void CascadeCorrelationNeuralNetwork::initialize(int numInputs, int numOutputs) 
         neuralNetwork->linkNeuronInputsToAllInputNeurons(neuron);
 
         // Set weights randomly.
-        neuron->setWeightsRandomly();
+        //neuron->setWeightsRandomly();
 
         // Add the Neuron.
         neuralNetwork->addOutputNeuron(neuron);
@@ -354,7 +354,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
     neuralNetwork->linkNeuronInputsToAllInputNeurons(neuron);
     for (int i = 0; i < neuralNetwork->getNumHiddenLayers(); i++)
         neuralNetwork->linkNeuronInputsToAllNeuronsInOneHiddenLayer(i, neuron);    
-    neuron->setWeightsRandomly();
+    //neuron->setWeightsRandomly();
 
     // Calculate V_average and E_o_average.
     double V_average = 0;
