@@ -5,7 +5,7 @@
 
 class NeuronAdditionalData {
 public:
-    NeuronAdditionalData();
+    NeuronAdditionalData(int numWeights);
     ~NeuronAdditionalData();
 
     /*

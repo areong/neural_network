@@ -41,14 +41,16 @@ void CascadeCorrelationNeuralNetwork::initialize(int numInputs, int numOutputs) 
     for (int i = 0; i < numOutputs; i++) {
         // Create Neuron.
         Neuron *neuron = new Neuron();
+
         // Set activation function.
         neuron->setActivationFunction(activationFunction);
-        // Add additional data.
-        NeuronAdditionalData *additionalData = new NeuronAdditionalData();
-        additionalData->setNumWeights(numInputs);
-        neuron->setAdditionalData(additionalData);
+        
         // Link to all input Neurons.
         neuralNetwork->linkNeuronInputsToAllInputNeurons(neuron);
+
+        // Add additional data.
+        NeuronAdditionalData *additionalData = new NeuronAdditionalData(neuron->getNumFrontNeurons());
+        neuron->setAdditionalData(additionalData);
 
         // Set weights randomly.
         //neuron->setWeightsRandomly();
@@ -346,15 +348,19 @@ void CascadeCorrelationNeuralNetwork::backPropagateByQuickprop() {
 void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
     // Create a Neuron.
     Neuron *neuron = new Neuron();
+
+    // Set activation function.
     neuron->setActivationFunction(activationFunction);
-    NeuronAdditionalData *additionalData = new NeuronAdditionalData();
-    additionalData->setNumWeights(neuralNetwork->getNumInputNeurons());
-    neuron->setAdditionalData(additionalData);
+    
     // Link to all existing Neurons except for output Neurons.
     neuralNetwork->linkNeuronInputsToAllInputNeurons(neuron);
     for (int i = 0; i < neuralNetwork->getNumHiddenLayers(); i++)
         neuralNetwork->linkNeuronInputsToAllNeuronsInOneHiddenLayer(i, neuron);    
     //neuron->setWeightsRandomly();
+    
+    // Add additional data.
+    NeuronAdditionalData *additionalData = new NeuronAdditionalData(neuron->getNumFrontNeurons());
+    neuron->setAdditionalData(additionalData);
 
     // Calculate V_average and E_o_average.
     double V_average = 0;

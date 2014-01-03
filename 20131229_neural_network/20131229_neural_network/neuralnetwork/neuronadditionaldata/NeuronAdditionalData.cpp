@@ -1,8 +1,11 @@
 #include "NeuronAdditionalData.h"
 
-NeuronAdditionalData::NeuronAdditionalData() {
+NeuronAdditionalData::NeuronAdditionalData(int numWeights) {
     dEdwLastCycle = new List<double>();
     dwLastCycle = new List<double>();
+    dEdThresholdLastCycle = 0;
+    dThresholdLastCycle = 0;
+    setNumWeights(numWeights);
 }
 
 NeuronAdditionalData::~NeuronAdditionalData() {
