@@ -93,6 +93,8 @@ void CascadeCorrelationNeuralNetwork::run() {
         }
         // Out of patience.
         else {
+            // Calculate correct rate
+            cout << "correct rate: " << calculateCorrectRate(trainingData) << endl;
             // If do not reach maximum number of hidden layers.
             if (neuralNetwork->getNumHiddenLayers() < maxNumHiddenLayers) {
                 addHiddenLayer();
@@ -125,7 +127,7 @@ double CascadeCorrelationNeuralNetwork::calculateCorrectRate(Data *data) {
             }
         }
 
-        cout << i << '\t' << indexChosenOutputNeuron + 1 << endl;
+        //cout << i << '\t' << indexChosenOutputNeuron + 1 << endl;
 
         // If correct.
         if (indexChosenOutputNeuron + 1 == data->get_y_byIndex(i))
@@ -177,19 +179,18 @@ void CascadeCorrelationNeuralNetwork::backPropagateByTraditionalBackprop() {
     // For each output Neuron.
     for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
         Neuron *outputNeuron = neuralNetwork->getOutputNeuron(j);
+        // Output
+        double output = outputNeuron->getStoredOutputWithoutCalculation();
         // Calculate y - y_true.
-        double diff = outputNeuron->getStoredOutputWithoutCalculation() - 
-                      correctOutputs->get(j);
+        double diff = output - correctOutputs->get(j);
             
         // For each front Neuron.
         for (int i = 0; i < outputNeuron->getNumFrontNeurons(); i++) {
             // Output of front Neuron
             double outputFront = outputNeuron->getFrontNeuron(i)->getStoredOutputWithoutCalculation();
-            // storedWeightedSum
-            double storedWeightedSum = outputNeuron->getStoredWeightedSumWithoutCalculation();
             // Calculate dE/dw_i
             double dEdw = diff * 
-                            outputNeuron->getActivationFunction()->derivative(storedWeightedSum) *
+                            outputNeuron->getActivationFunction()->derivativeFromOutput(output) *
                             outputFront;
             // Calculate delta w_i
             double dw = calculate_dw_byTraditionalBackprop(dEdw);
@@ -203,11 +204,9 @@ void CascadeCorrelationNeuralNetwork::backPropagateByTraditionalBackprop() {
         // Threshold.
         // Output of front Neuron
         double outputFront = 1;
-        // storedWeightedSum
-        double storedWeightedSum = outputNeuron->getStoredWeightedSumWithoutCalculation();
         // Calculate dE/dw_i
         double dEdThreshold = diff * 
-                      outputNeuron->getActivationFunction()->derivative(storedWeightedSum) *
+                      outputNeuron->getActivationFunction()->derivativeFromOutput(output) *
                       outputFront;
         // Calculate delta w_i
         double dThreshold = calculate_dw_byTraditionalBackprop(dEdThreshold);
@@ -226,19 +225,18 @@ void CascadeCorrelationNeuralNetwork::backPropagateByQuickprop() {
     // For each output Neuron.
     for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
         Neuron *outputNeuron = neuralNetwork->getOutputNeuron(j);
+        // Output
+        double output = outputNeuron->getStoredOutputWithoutCalculation();
         // Calculate y - y_true.
-        double diff = outputNeuron->getStoredOutputWithoutCalculation() - 
-                      correctOutputs->get(j);
+        double diff = output - correctOutputs->get(j);
             
         // For each front Neuron.
         for (int i = 0; i < outputNeuron->getNumFrontNeurons(); i++) {
             // Output of front Neuron
             double outputFront = outputNeuron->getFrontNeuron(i)->getStoredOutputWithoutCalculation();
-            // storedWeightedSum
-            double storedWeightedSum = outputNeuron->getStoredWeightedSumWithoutCalculation();
             // Calculate dE/dw_i
             double dEdw = diff * 
-                            outputNeuron->getActivationFunction()->derivative(storedWeightedSum) *
+                            outputNeuron->getActivationFunction()->derivativeFromOutput(output) *
                             outputFront;
             
             // Calculate delta w_i
@@ -271,12 +269,9 @@ void CascadeCorrelationNeuralNetwork::backPropagateByQuickprop() {
         // Output of front Neuron
         double outputFront = 1;
 
-        // storedWeightedSum
-        double storedWeightedSum = outputNeuron->getStoredWeightedSumWithoutCalculation();
-
         // Calculate dE/dThreshold
         double dEdThreshold = diff * 
-                      outputNeuron->getActivationFunction()->derivative(storedWeightedSum) *
+                      outputNeuron->getActivationFunction()->derivativeFromOutput(output) *
                       outputFront;
         
         // Calculate dThreshold.
@@ -398,7 +393,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         E_o_average->set(i, E_o_average->get(i) / trainingData->getNumItems());
 
     // For number of big training cycles.
-    int numBigTrainingCycles = 6;
+    int numBigTrainingCycles = 2;
     for (int iBigCycle = 0; iBigCycle < numBigTrainingCycles; iBigCycle++) {
         // Clear V_p and V_average.
         V_p->clear();
@@ -456,9 +451,9 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                 // Calculate I_i_p and f_p_derivative
                 // First iWeights are the indices of input Neurons.
                 double I_i_p = trainingData->get_x_i_byIndexAnd_i(i, iWeight);
-                // Inversely calculate the weightedSum
-                double weightedSum = neuron->getActivationFunction()->inverse(V_p->get(i));
-                double f_p_derivative = neuron->getActivationFunction()->derivative(weightedSum);
+                // f_p_derivative.
+                double output = V_p->get(i);
+                double f_p_derivative = neuron->getActivationFunction()->derivativeFromOutput(output);
 
                 // Inner sum over o.
                 double innerSum = 0;
@@ -471,14 +466,8 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                     // "Sign of correlation between V_p and Output_p_o."
                     // Assume to be "sign between V_p and Output_p_o."
                     double sigma_o = 1;
-                    if (V_p->get(i) > 0) {
-                        if (O_p_o->get(i)->get(j) < 0)
-                            sigma_o = -1;
-                    }
-                    else {
-                        if (O_p_o->get(i)->get(j) > 0)
-                            sigma_o = -1;
-                    }
+                    if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
+                        sigma_o = -1;
 
                     // Add to innerSum.
                     innerSum += sigma_o * diff;
@@ -528,9 +517,9 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
             // Calculate I_i_p and f_p_derivative
             // First iWeights are the indices of input Neurons.
             double I_i_p = 1;
-            // inversely calculate the weightedSum
-            double weightedSum = neuron->getActivationFunction()->inverse(V_p->get(i));
-            double f_p_derivative = neuron->getActivationFunction()->derivative(weightedSum);
+            // f_p_derivative
+            double output = V_p->get(i);
+            double f_p_derivative = neuron->getActivationFunction()->derivativeFromOutput(output);
 
             // Inner sum over o.
             double innerSum = 0;
@@ -543,14 +532,8 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                 // "Sign of correlation between V_p and Output_p_o."
                 // Assume to be "sign between V_p and Output_p_o."
                 double sigma_o = 1;
-                if (V_p->get(i) > 0) {
-                    if (O_p_o->get(i)->get(j) < 0)
+                if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
                         sigma_o = -1;
-                }
-                else {
-                    if (O_p_o->get(i)->get(j) > 0)
-                        sigma_o = -1;
-                }
 
                 // Add to innerSum.
                 innerSum += sigma_o * diff;
@@ -611,11 +594,11 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                     // I_i_p is the output of the hidden neuron.
                     double I_i_p = H_p_o->get(i)->get(iLayer)->get(iHidden);
 
-                    // Inversely calculate the weightedSum
-                    double weightedSum = neuron->getActivationFunction()->inverse(V_p->get(i));
+                    // Output
+                    double output = V_p->get(i);
                     
                     // f_p_derivative.
-                    double f_p_derivative = neuron->getActivationFunction()->derivative(weightedSum);
+                    double f_p_derivative = neuron->getActivationFunction()->derivativeFromOutput(output);
 
                     // Inner sum over o.
                     double innerSum = 0;
@@ -628,14 +611,8 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                         // "Sign of correlation between V_p and Output_p_o."
                         // Assume to be "sign between V_p and Output_p_o."
                         double sigma_o = 1;
-                        if (V_p->get(i) > 0) {
-                            if (O_p_o->get(i)->get(j) < 0)
-                                sigma_o = -1;
-                        }
-                        else {
-                            if (O_p_o->get(i)->get(j) > 0)
-                                sigma_o = -1;
-                        }
+                        if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
+                            sigma_o = -1;
 
                         // Add to innerSum.
                         innerSum += sigma_o * diff;
@@ -703,3 +680,17 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
     // Complete.
 }
 
+bool CascadeCorrelationNeuralNetwork::isSameSign(double variableA, double variableB) {
+    if (variableA > 0) {
+        if (variableB < 0)
+            return false;
+        else
+            return true;
+    }
+    else {
+        if (variableB > 0)
+            return false;
+        else
+            return true;
+    }
+}

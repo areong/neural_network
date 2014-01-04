@@ -4,8 +4,9 @@
 class IActivationFunction {
 public:
     virtual double activate(double input) = 0;
-    virtual double inverse(double input) = 0;
+    virtual double inverse(double output) = 0;
     virtual double derivative(double input) = 0;
+    virtual double derivativeFromOutput(double output) = 0;
 };
 
 #endif

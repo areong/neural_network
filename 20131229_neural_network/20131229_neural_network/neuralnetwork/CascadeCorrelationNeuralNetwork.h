@@ -49,6 +49,7 @@ private:
         Add a hidden layer, the core of the algorithm.
      */
     void addHiddenLayer();
+    bool isSameSign(double variableA, double variableB);
 
     NeuralNetwork *neuralNetwork;
     HyperbolicTangent *activationFunction;

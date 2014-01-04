@@ -8,8 +8,9 @@ public:
     HyperbolicTangent();
     ~HyperbolicTangent();
     double activate(double input);
-    double inverse(double input);
+    double inverse(double output);
     double derivative(double input);
+    double derivativeFromOutput(double output);
 
 private:
     double scaling;
