@@ -27,13 +27,13 @@ void Experiment::setTrainingData(Data *dataTraining) {
 void Experiment::execute() {
     network = new CascadeCorrelationNeuralNetwork();
     network->initialize(12810, 12);
-    network->setMaxNumHiddenLayers(1);
-    network->setPatience(200);
+    network->setMaxNumHiddenLayers(3);
+    network->setPatience(160);
     network->setTrainingData(dataValidationTrain->get(0));
     cout << "network initialization complete" << endl;
     network->run();
     cout << "run complete" << endl;
-    cout << "correct rate: " << calculateCorrectRate(0);
+    cout << "Out of sample correct rate: " << calculateCorrectRate(0);
 }
 
 /*

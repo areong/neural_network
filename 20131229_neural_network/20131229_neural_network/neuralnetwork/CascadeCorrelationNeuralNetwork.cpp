@@ -11,7 +11,7 @@ using namespace std;
 CascadeCorrelationNeuralNetwork::CascadeCorrelationNeuralNetwork() {
     neuralNetwork = new NeuralNetwork();
     activationFunction = new HyperbolicTangent();
-    learningRate = 1;
+    learningRate = 0.1;
     maxNumHiddenLayers = 0;
     numTrainingCycles = 0;
     patience = 0;
@@ -83,18 +83,23 @@ void CascadeCorrelationNeuralNetwork::run() {
             feedInputs(trainingData, currentIndexTrainingData);
             setCorrectOutputs(trainingData, currentIndexTrainingData);
             feedForward();
+            
+            cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
+
             backPropagate();
 
-            if (currentIndexTrainingData % 100 == 0)
-                cout << "DataItem: " << currentIndexTrainingData << endl;
+            //if (currentIndexTrainingData % 100 == 0)
+            //    cout << "DataItem: " << currentIndexTrainingData << endl;
             
             numTrainingCycles += 1;
             currentIndexTrainingData = (currentIndexTrainingData + 1) % trainingData->getNumItems();
         }
         // Out of patience.
         else {
+            // Cout
+            cout << "Num hidden layers: " << neuralNetwork->getNumHiddenLayers() << endl;
             // Calculate correct rate
-            cout << "correct rate: " << calculateCorrectRate(trainingData) << endl;
+            cout << "In sample correct rate: " << calculateCorrectRate(trainingData) << endl;
             // If do not reach maximum number of hidden layers.
             if (neuralNetwork->getNumHiddenLayers() < maxNumHiddenLayers) {
                 addHiddenLayer();
@@ -170,8 +175,21 @@ void CascadeCorrelationNeuralNetwork::feedForward() {
         neuralNetwork->getOutputNeuron(i)->calculateOutput();
 }
 
+double CascadeCorrelationNeuralNetwork::calculateErrorOneItem() {
+    double error = 0;
+    for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
+        cout << "  output " << j << ":\t" << neuralNetwork->getOutputNeuron(j)->getStoredOutputWithoutCalculation()
+             << "\t, correct output: " << correctOutputs->get(j) << endl;
+        
+        double temp = correctOutputs->get(j) -
+                      neuralNetwork->getOutputNeuron(j)->getStoredOutputWithoutCalculation();
+        error += temp * temp / 2;
+    }
+    return error;
+}
+
 void CascadeCorrelationNeuralNetwork::backPropagate() {
-    backPropagateByQuickprop();
+    backPropagateByTraditionalBackprop();
 }
 
 void CascadeCorrelationNeuralNetwork::backPropagateByTraditionalBackprop() {
@@ -410,14 +428,17 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
 
             // V_average accumulate.
             V_average += neuron->getStoredOutputWithoutCalculation();
-            //cout << "neuron->getOutput(): " << neuron->getStoredOutputWithoutCalculation() << endl;
+            cout << "neuron->getOutput(): " << neuron->getStoredOutputWithoutCalculation() << endl;
         }
         // V_average.
         V_average /= trainingData->getNumItems();
     
-        //cout << "V_average: " << V_average << endl;
-        //for (int i = 0; i < neuralNetwork->getNumOutputNeurons(); i++)
-        //    cout << "E_o_average->get(" << i << "): " << E_o_average->get(i) << endl;
+        cout << "V_average: " << V_average << endl;
+        for (int i = 0; i < neuralNetwork->getNumOutputNeurons(); i++)
+            cout << "E_o_average->get(" << i << "): " << E_o_average->get(i) << endl;
+
+        // sigma_o.
+        List<double> *sigma_o = new List<double>();
 
         // Calculate S.
         double S = 0;
@@ -428,10 +449,19 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                             (E_p_o->get(i)->get(j) - E_o_average->get(j));
             }
             // Absolute value.
-            if (innerSum < 0)
+            double sigma = 1;
+            if (innerSum < 0) {
                 innerSum *= -1;
+                sigma = -1;
+            }
+
+            // Store sign to sigma_o.
+            sigma_o->add(sigma);
+            cout << "sigma_o  " << j << " : " << sigma_o->get(j) << endl;
+
+            // Add to S.
             S += innerSum;
-            //cout << "j: " << j << ", innerSum: " << innerSum << endl;
+            cout << "j: " << j << ", innerSum: " << innerSum << endl;
         }
 
         cout << "Big cycle: " << iBigCycle << ", S: " << S << endl;
@@ -465,12 +495,12 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
 
                     // "Sign of correlation between V_p and Output_p_o."
                     // Assume to be "sign between V_p and Output_p_o."
-                    double sigma_o = 1;
-                    if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
-                        sigma_o = -1;
+                    //double sigma_o = 1;
+                    //if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
+                    //    sigma_o = -1;
 
                     // Add to innerSum.
-                    innerSum += sigma_o * diff;
+                    innerSum += sigma_o->get(j) * diff;
                         
                     // End of for each output Neuron.
                 }
@@ -485,7 +515,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
             // dw
             // If is the first big cycle, use traditional backprop.
             double dw = 0;
-            if (iBigCycle == 0) {
+            if (iBigCycle >= 0) {
                 dw = calculate_dw_byTraditionalBackprop(dSdw);
             }
             // If not the first big cycle, use Quickprop.
@@ -531,12 +561,12 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
 
                 // "Sign of correlation between V_p and Output_p_o."
                 // Assume to be "sign between V_p and Output_p_o."
-                double sigma_o = 1;
-                if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
-                        sigma_o = -1;
+                //double sigma_o = 1;
+                //if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
+                //    sigma_o = -1;
 
                 // Add to innerSum.
-                innerSum += sigma_o * diff;
+                innerSum += sigma_o->get(j) * diff;
                         
                 // End of for each output Neuron.
             }
@@ -551,7 +581,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         // dThreshold
         // If is the first big cycle, use traditional backprop.
         double dThreshold = 0;
-        if (iBigCycle == 0) {
+        if (iBigCycle >= 0) {
             dThreshold = calculate_dw_byTraditionalBackprop(dSdThreshold);
         }
         // If not the first big cycle, use Quickprop.
@@ -610,12 +640,12 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
 
                         // "Sign of correlation between V_p and Output_p_o."
                         // Assume to be "sign between V_p and Output_p_o."
-                        double sigma_o = 1;
-                        if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
-                            sigma_o = -1;
+                        //double sigma_o = 1;
+                        //if (!isSameSign(V_p->get(i), O_p_o->get(i)->get(j)))
+                        //    sigma_o = -1;
 
                         // Add to innerSum.
-                        innerSum += sigma_o * diff;
+                        innerSum += sigma_o->get(j) * diff;
                         
                         // End of for each output Neuron.
                     }
@@ -630,7 +660,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                 // dw
                 // If is the first big cycle, use traditional backprop.
                 double dw = 0;
-                if (iBigCycle == 0) {
+                if (iBigCycle >= 0) {
                     dw = calculate_dw_byTraditionalBackprop(dSdw);
                 }
                 // If not the first big cycle, use Quickprop.

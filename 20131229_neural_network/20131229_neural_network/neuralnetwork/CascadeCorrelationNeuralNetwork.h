@@ -40,6 +40,7 @@ private:
     void setCorrectOutputsForMLFinal(Data *data, int index);
 
     void feedForward();
+    double calculateErrorOneItem();
     void backPropagate();
     void backPropagateByTraditionalBackprop();
     void backPropagateByQuickprop();

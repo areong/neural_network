@@ -27,9 +27,9 @@ double HyperbolicTangent::inverse(double output) {
 
 double HyperbolicTangent::derivative(double input) {
     double temp = tanh(input / scaling);
-    return (1 - temp * temp) * scaling;
+    return (1 - temp * temp) / scaling;
 }
 
 double HyperbolicTangent::derivativeFromOutput(double output) {
-    return (1 - output * output) * scaling;
+    return (1 - output * output) / scaling;
 }
