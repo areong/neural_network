@@ -16,6 +16,8 @@ Neuron::Neuron(IActivationFunction *activationFunction) {
     frontNeurons = new List<Neuron *>();
 
     this->activationFunction = activationFunction;
+
+    this->additionalData = 0;
 }
 
 Neuron::~Neuron() {
