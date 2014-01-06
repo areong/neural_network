@@ -11,7 +11,7 @@ using namespace std;
 CascadeCorrelationNeuralNetwork::CascadeCorrelationNeuralNetwork() {
     neuralNetwork = new NeuralNetwork();
     activationFunction = new HyperbolicTangent();
-    learningRate = 0.1;
+    learningRate = 0.5;
     maxNumHiddenLayers = 0;
     numTrainingCycles = 0;
     patience = 0;
@@ -189,7 +189,7 @@ double CascadeCorrelationNeuralNetwork::calculateErrorOneItem() {
 }
 
 void CascadeCorrelationNeuralNetwork::backPropagate() {
-    backPropagateByTraditionalBackprop();
+    backPropagateByQuickprop();
 }
 
 void CascadeCorrelationNeuralNetwork::backPropagateByTraditionalBackprop() {
@@ -411,7 +411,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         E_o_average->set(i, E_o_average->get(i) / trainingData->getNumItems());
 
     // For number of big training cycles.
-    int numBigTrainingCycles = 2;
+    int numBigTrainingCycles = 60;
     for (int iBigCycle = 0; iBigCycle < numBigTrainingCycles; iBigCycle++) {
         // Clear V_p and V_average.
         V_p->clear();
@@ -525,6 +525,10 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                                 neuron->getAdditionalData()->getdwLastCycle(iWeight));
             }
 
+            // Reverse the sign of dw, becuase we want to maximaze S
+            // thus cannot use the negative sign used in minimizing E.
+            dw *= -1;
+
             // Update weight
             neuron->setWeight(iWeight, neuron->getWeight(iWeight) + dw);
 
@@ -590,6 +594,10 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                             neuron->getAdditionalData()->getdEdThresholdLastCycle(),
                             neuron->getAdditionalData()->getdThresholdLastCycle());
         }
+
+        // Reverse the sign of dw, becuase we want to maximaze S
+        // thus cannot use the negative sign used in minimizing E.
+        dThreshold *= -1;
 
         // Update weight
         neuron->setThreshold(neuron->getThreshold() + dThreshold);
@@ -669,6 +677,10 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                                     neuron->getAdditionalData()->getdEdwLastCycle(iWeight),
                                     neuron->getAdditionalData()->getdwLastCycle(iWeight));
                 }
+
+                // Reverse the sign of dw, becuase we want to maximaze S
+                // thus cannot use the negative sign used in minimizing E.
+                dw *= -1;
 
                 // Update weight
                 neuron->setWeight(iWeight, neuron->getWeight(iWeight) + dw);

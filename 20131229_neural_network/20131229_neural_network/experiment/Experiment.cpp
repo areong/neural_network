@@ -27,8 +27,8 @@ void Experiment::setTrainingData(Data *dataTraining) {
 void Experiment::execute() {
     network = new CascadeCorrelationNeuralNetwork();
     network->initialize(12810, 12);
-    network->setMaxNumHiddenLayers(3);
-    network->setPatience(160);
+    network->setMaxNumHiddenLayers(2);
+    network->setPatience(60);
     network->setTrainingData(dataValidationTrain->get(0));
     cout << "network initialization complete" << endl;
     network->run();
