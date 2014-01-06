@@ -84,9 +84,9 @@ void CascadeCorrelationNeuralNetwork::run() {
             setCorrectOutputs(trainingData, currentIndexTrainingData);
             feedForward();
             
-            cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
-                neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
-            cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
+            //cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
+            //    neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
+            //cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
 
             backPropagate();
 
@@ -124,7 +124,7 @@ double CascadeCorrelationNeuralNetwork::calculateCorrectRate(Data *data) {
         feedForward();
 
         // Find output Neuron with the largest output.
-        int outputMax = 0;
+        int outputMax = -2;
         int indexChosenOutputNeuron = 0;
         for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
             Neuron *outputNeuron = neuralNetwork->getOutputNeuron(j);
@@ -134,7 +134,8 @@ double CascadeCorrelationNeuralNetwork::calculateCorrectRate(Data *data) {
             }
         }
 
-        //cout << i << '\t' << indexChosenOutputNeuron + 1 << endl;
+        //cout << i << "\t output = " << indexChosenOutputNeuron + 1
+        //     << "\t, correct output = " << data->get_y_byIndex(i) << endl;
 
         // If correct.
         if (indexChosenOutputNeuron + 1 == data->get_y_byIndex(i))
@@ -430,14 +431,14 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
 
             // V_average accumulate.
             V_average += neuron->getStoredOutputWithoutCalculation();
-            cout << "neuron->getOutput(): " << neuron->getStoredOutputWithoutCalculation() << endl;
+            //cout << "neuron->getOutput(): " << neuron->getStoredOutputWithoutCalculation() << endl;
         }
         // V_average.
         V_average /= trainingData->getNumItems();
     
-        cout << "V_average: " << V_average << endl;
-        for (int i = 0; i < neuralNetwork->getNumOutputNeurons(); i++)
-            cout << "E_o_average->get(" << i << "): " << E_o_average->get(i) << endl;
+        //cout << "V_average: " << V_average << endl;
+        //for (int i = 0; i < neuralNetwork->getNumOutputNeurons(); i++)
+        //    cout << "E_o_average->get(" << i << "): " << E_o_average->get(i) << endl;
 
         // sigma_o.
         List<double> *sigma_o = new List<double>();
@@ -459,11 +460,11 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
 
             // Store sign to sigma_o.
             sigma_o->add(sigma);
-            cout << "sigma_o  " << j << " : " << sigma_o->get(j) << endl;
+            //cout << "sigma_o  " << j << " : " << sigma_o->get(j) << endl;
 
             // Add to S.
             S += innerSum;
-            cout << "j: " << j << ", innerSum: " << innerSum << endl;
+            //cout << "j: " << j << ", innerSum: " << innerSum << endl;
         }
 
         cout << "Big cycle: " << iBigCycle << ", S: " << S << endl;
