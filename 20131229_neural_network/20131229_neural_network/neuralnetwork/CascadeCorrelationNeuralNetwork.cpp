@@ -85,9 +85,9 @@ void CascadeCorrelationNeuralNetwork::run() {
             feedForward();
             backPropagate();
             
-            cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
-                neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
-            cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
+            //cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
+            //    neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
+            //cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
 
             //if (currentIndexTrainingData % 100 == 0)
             //    cout << "DataItem: " << currentIndexTrainingData << endl;
@@ -97,12 +97,13 @@ void CascadeCorrelationNeuralNetwork::run() {
         }
         // Out of patience.
         else {
-            // Cout
-            cout << "Num hidden layers: " << neuralNetwork->getNumHiddenLayers() << endl;
-            // Calculate correct rate
-            cout << "In sample correct rate: " << calculateCorrectRate(trainingData) << endl;
+            //// Cout
+            //cout << "Num hidden layers: " << neuralNetwork->getNumHiddenLayers() << endl;
+            //// Calculate correct rate
+            //cout << "In sample correct rate: " << calculateCorrectRate(trainingData) << endl;
             // If do not reach maximum number of hidden layers.
             if (neuralNetwork->getNumHiddenLayers() < maxNumHiddenLayers) {
+                cout << "                Num hidden layers: " << neuralNetwork->getNumHiddenLayers() << endl;
                 addHiddenLayer();
                 numTrainingCycles = 0;
             }
@@ -135,8 +136,8 @@ double CascadeCorrelationNeuralNetwork::calculateCorrectRate(Data *data) {
             }
         }
 
-        cout << i << "\t output = " << indexChosenOutputNeuron + 1
-             << "\t, correct output = " << data->get_y_byIndex(i) << endl;
+        //cout << i << "\t output = " << indexChosenOutputNeuron + 1
+        //     << "\t, correct output = " << data->get_y_byIndex(i) << endl;
 
         // If correct.
         if (indexChosenOutputNeuron + 1 == data->get_y_byIndex(i))
@@ -182,8 +183,8 @@ void CascadeCorrelationNeuralNetwork::feedForward() {
 double CascadeCorrelationNeuralNetwork::calculateErrorOneItem() {
     double error = 0;
     for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
-        cout << "  output " << j << ":\t" << neuralNetwork->getOutputNeuron(j)->getStoredOutputWithoutCalculation()
-             << "\t, correct output: " << correctOutputs->get(j) << endl;
+        //cout << "  output " << j << ":\t" << neuralNetwork->getOutputNeuron(j)->getStoredOutputWithoutCalculation()
+        //     << "\t, correct output: " << correctOutputs->get(j) << endl;
         
         double temp = correctOutputs->get(j) -
                       neuralNetwork->getOutputNeuron(j)->getStoredOutputWithoutCalculation();
@@ -481,7 +482,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
             //cout << "j: " << j << ", innerSum: " << innerSum << endl;
         }
 
-        cout << "Big cycle: " << iBigCycle << ", S: " << S << endl;
+        cout << "                Big cycle: " << iBigCycle << ", S: " << S << endl;
 
         // Update weights of the new Neuron.
         // Code is a little bit similar to 

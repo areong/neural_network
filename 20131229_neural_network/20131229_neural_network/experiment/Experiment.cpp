@@ -1,6 +1,7 @@
 #include "Experiment.h"
 
 #include <iostream>
+#include <time.h>
 #include "../data/Data.h"
 #include "../neuralnetwork/CascadeCorrelationNeuralNetwork.h"
 using namespace std;
@@ -25,15 +26,59 @@ void Experiment::setTrainingData(Data *dataTraining) {
 }
 
 void Experiment::execute() {
-    network = new CascadeCorrelationNeuralNetwork();
-    network->initialize(12810, 12);
-    network->setMaxNumHiddenLayers(0);
-    network->setPatience(4916);
-    network->setTrainingData(dataValidationTrain->get(0));
-    cout << "network initialization complete" << endl;
-    network->run();
-    cout << "run complete" << endl;
-    cout << "Out of sample correct rate: " << calculateCorrectRate(0);
+    // Change number of hidden layers.
+    for (int iNumHidden = 0; iNumHidden < 3; iNumHidden++) {
+
+        double foldInAverage = 0;
+        double foldOutAverage = 0;
+        // For every validation set.
+        for (int iFold = 0; iFold < numFold; iFold++) {
+
+            double inAverage = 0;
+            double outAverage = 0;
+            // Do 3 times with the same parameters.
+            for (int i = 0; i < 3; i++) {
+
+                cout << "iNumHidden = " << iNumHidden
+                     << "\t,iFold = " << iFold
+                     << "\t,i = " << i << endl;
+                cout << "    sec: " << clock() / (float)CLOCKS_PER_SEC
+                     << " start" << endl;
+                network = new CascadeCorrelationNeuralNetwork();
+                network->initialize(12810, 12);
+                network->setMaxNumHiddenLayers(iNumHidden);
+                network->setPatience(4916);
+                network->setTrainingData(dataValidationTrain->get(iFold));
+                //cout << "    network initialization complete" << endl;
+                cout << "    sec: " << clock() / (float)CLOCKS_PER_SEC
+                     << " run" << endl;
+                network->run();
+                //cout << "    run complete" << endl;
+                cout << "    sec: " << clock() / (float)CLOCKS_PER_SEC
+                     << " run finish" << endl;
+                double correct_in = network->calculateCorrectRate(dataValidationTrain->get(iFold));
+                double correct_out = calculateCorrectRate(iFold);
+                cout << "                Correct_in  = " << correct_in << endl;
+                cout << "                Correct_out = " << correct_out << endl;
+
+                inAverage += correct_in;
+                outAverage += correct_out;
+
+                if (iNumHidden == 0)
+                    break;
+            }
+            double denom = 3;
+            if (iNumHidden == 0)
+                denom = 1;
+            cout << "            Correct_in_average  = " << inAverage / denom << endl;
+            cout << "            Correct_out_average = " << outAverage / denom << endl;
+
+            foldInAverage += inAverage / denom;
+            foldOutAverage += outAverage / denom;
+        }
+        cout << "        Correct_fold_in_average  = " << foldInAverage / (double)numFold << endl;
+        cout << "        Correct_fold_out_average = " << foldOutAverage / (double)numFold << endl;
+    }
 }
 
 /*
