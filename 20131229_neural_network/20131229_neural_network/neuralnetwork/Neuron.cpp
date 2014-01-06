@@ -113,6 +113,10 @@ bool Neuron::isWeightsLocked() {
 void Neuron::addFrontNeuron(Neuron *neuron) {
     frontNeurons->add(neuron);
     weights->add(0);
+
+    // Additional data
+    if (additionalData != 0)
+        additionalData->increaseNumWeights();
 }
 
 void Neuron::removeFrontNeuron(Neuron *neuron) {
@@ -121,11 +125,19 @@ void Neuron::removeFrontNeuron(Neuron *neuron) {
         frontNeurons->remove(neuron);
         weights->removeByIndex(index);
     }
+
+    // Additional data
+    if (additionalData != 0)
+        additionalData->removeByIndex(index);
 }
 
 void Neuron::removeFrontNeuronByIndex(int index) {
     frontNeurons->removeByIndex(index);
     weights->removeByIndex(index);
+
+    // Additional data
+    if (additionalData != 0)
+        additionalData->removeByIndex(index);
 }
 
 Neuron *Neuron::getFrontNeuron(int index) {

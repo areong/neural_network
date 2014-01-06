@@ -12,6 +12,8 @@ public:
         Initialize 2 List to all zero.
      */
     void setNumWeights(int numWeights);
+    void increaseNumWeights();
+    void removeByIndex(int index);
     double getdEdwLastCycle(int index);
     void   setdEdwLastCycle(int index, double dEdw);
     double getdwLastCycle(int index);

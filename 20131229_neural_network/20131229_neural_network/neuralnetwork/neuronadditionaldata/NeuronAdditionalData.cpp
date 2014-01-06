@@ -22,6 +22,16 @@ void NeuronAdditionalData::setNumWeights(int numWeights) {
     }
 }
 
+void NeuronAdditionalData::increaseNumWeights() {
+    dEdwLastCycle->add(1);
+    dwLastCycle->add(1);
+}
+
+void NeuronAdditionalData::removeByIndex(int index) {
+    dEdwLastCycle->removeByIndex(index);
+    dwLastCycle->removeByIndex(index);
+}
+
 double NeuronAdditionalData::getdEdwLastCycle(int index) {
     return dEdwLastCycle->get(index);
 }

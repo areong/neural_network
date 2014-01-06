@@ -84,6 +84,8 @@ void CascadeCorrelationNeuralNetwork::run() {
             setCorrectOutputs(trainingData, currentIndexTrainingData);
             feedForward();
             
+            cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
+                neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
             cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
 
             backPropagate();
@@ -189,7 +191,7 @@ double CascadeCorrelationNeuralNetwork::calculateErrorOneItem() {
 }
 
 void CascadeCorrelationNeuralNetwork::backPropagate() {
-    backPropagateByQuickprop();
+    backPropagateByTraditionalBackprop();
 }
 
 void CascadeCorrelationNeuralNetwork::backPropagateByTraditionalBackprop() {
@@ -411,7 +413,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         E_o_average->set(i, E_o_average->get(i) / trainingData->getNumItems());
 
     // For number of big training cycles.
-    int numBigTrainingCycles = 60;
+    int numBigTrainingCycles = 3;
     for (int iBigCycle = 0; iBigCycle < numBigTrainingCycles; iBigCycle++) {
         // Clear V_p and V_average.
         V_p->clear();
