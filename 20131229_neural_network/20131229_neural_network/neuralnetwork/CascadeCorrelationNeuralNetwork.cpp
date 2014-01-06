@@ -83,12 +83,11 @@ void CascadeCorrelationNeuralNetwork::run() {
             feedInputs(trainingData, currentIndexTrainingData);
             setCorrectOutputs(trainingData, currentIndexTrainingData);
             feedForward();
-            
-            //cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
-            //    neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
-            //cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
-
             backPropagate();
+            
+            cout << " last weight:\t" << neuralNetwork->getOutputNeuron(0)->getWeight(
+                neuralNetwork->getOutputNeuron(0)->getNumFrontNeurons() - 1) << endl;
+            cout << currentIndexTrainingData << ": error = " << calculateErrorOneItem() << endl; 
 
             //if (currentIndexTrainingData % 100 == 0)
             //    cout << "DataItem: " << currentIndexTrainingData << endl;
@@ -124,18 +123,20 @@ double CascadeCorrelationNeuralNetwork::calculateCorrectRate(Data *data) {
         feedForward();
 
         // Find output Neuron with the largest output.
-        int outputMax = -2;
+        double outputMax = -2;
         int indexChosenOutputNeuron = 0;
         for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
             Neuron *outputNeuron = neuralNetwork->getOutputNeuron(j);
-            if (outputNeuron->getStoredOutputWithoutCalculation() > outputMax) {
-                outputMax = outputNeuron->getStoredOutputWithoutCalculation();
+            double output = outputNeuron->getStoredOutputWithoutCalculation();
+            //cout << i << ": " << output << endl;
+            if (output > outputMax) {
+                outputMax = output;
                 indexChosenOutputNeuron = j;                   
             }
         }
 
-        //cout << i << "\t output = " << indexChosenOutputNeuron + 1
-        //     << "\t, correct output = " << data->get_y_byIndex(i) << endl;
+        cout << i << "\t output = " << indexChosenOutputNeuron + 1
+             << "\t, correct output = " << data->get_y_byIndex(i) << endl;
 
         // If correct.
         if (indexChosenOutputNeuron + 1 == data->get_y_byIndex(i))
@@ -214,7 +215,7 @@ void CascadeCorrelationNeuralNetwork::backPropagateByTraditionalBackprop() {
                             outputNeuron->getActivationFunction()->derivativeFromOutput(output) *
                             outputFront;
             // Calculate delta w_i
-            double dw = calculate_dw_byTraditionalBackprop(dEdw);
+            double dw = calculate_dw_byTraditionalBackprop(dEdw * -1);
 
             //cout << i << '\t' << outputFront << '\t' << diff << '\t' << dEdw << '\t' << dw << endl;
 
@@ -264,11 +265,11 @@ void CascadeCorrelationNeuralNetwork::backPropagateByQuickprop() {
             // If is the first cycle, use traditional backprop.
             double dw = 0;
             if (isTheFirstCycle) {
-                dw = calculate_dw_byTraditionalBackprop(dEdw);
+                dw = calculate_dw_byTraditionalBackprop(dEdw * -1);
             }
             // If not the first cycle, use Quickprop.
             else {
-                dw = calculate_dw_byQuickprop(dEdw,
+                dw = calculate_dw_byQuickprop(dEdw * -1,
                                 outputNeuron->getAdditionalData()->getdEdwLastCycle(i),
                                 outputNeuron->getAdditionalData()->getdwLastCycle(i));
             }
@@ -328,7 +329,7 @@ void CascadeCorrelationNeuralNetwork::backPropagateByQuickprop() {
 }
 
 double CascadeCorrelationNeuralNetwork::calculate_dw_byTraditionalBackprop(double dEdw) {
-    return -1 * learningRate * dEdw;
+    return learningRate * dEdw;
 }
 
 double CascadeCorrelationNeuralNetwork::calculate_dw_byQuickprop(double dEdw,
@@ -337,7 +338,15 @@ double CascadeCorrelationNeuralNetwork::calculate_dw_byQuickprop(double dEdw,
     double temp = dEdwLastCycle - dEdw;
     if (temp == 0)
         temp = 1;
-    return dEdw / temp *dwLastCycle;
+    double growth = dEdw / temp;
+    if (dwLastCycle == 0)
+        return dEdw * 1;
+    else {
+        if (growth < learningRate)
+            return growth * dwLastCycle;
+        else
+            return learningRate * dwLastCycle;
+    }
 }
  
 void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
@@ -394,13 +403,18 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         List<double> *E_p_o_eachDataItem = new List<double>();
         List<double> *O_p_o_eachDataItem = new List<double>();
         for (int j = 0; j < neuralNetwork->getNumOutputNeurons(); j++) {
+            Neuron *outputNeuron = neuralNetwork->getOutputNeuron(j);
             // O_p_o
             double output = neuralNetwork->getOutputNeuron(j)->getStoredOutputWithoutCalculation();
             O_p_o_eachDataItem->add(output);
 
-            // Square error.
-            double error = correctOutputs->get(j) - output;            
-            error = error * error / 2;
+            //// Square error.
+            //double error = correctOutputs->get(j) - output;            
+            //error = error * error / 2;
+
+            // e_p_o = (y_p_o - t_p_o) * f_p^'
+            double error = (output - correctOutputs->get(j)) *
+                           outputNeuron->getActivationFunction()->derivativeFromOutput(output);
             E_p_o_eachDataItem->add(error);
 
             // E_o_average accumulate.
@@ -414,7 +428,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         E_o_average->set(i, E_o_average->get(i) / trainingData->getNumItems());
 
     // For number of big training cycles.
-    int numBigTrainingCycles = 3;
+    int numBigTrainingCycles = 2;
     for (int iBigCycle = 0; iBigCycle < numBigTrainingCycles; iBigCycle++) {
         // Clear V_p and V_average.
         V_p->clear();
@@ -528,9 +542,9 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                                 neuron->getAdditionalData()->getdwLastCycle(iWeight));
             }
 
-            // Reverse the sign of dw, becuase we want to maximaze S
-            // thus cannot use the negative sign used in minimizing E.
-            dw *= -1;
+            //// Reverse the sign of dw, becuase we want to maximaze S
+            //// thus cannot use the negative sign used in minimizing E.
+            //dw *= -1;
 
             // Update weight
             neuron->setWeight(iWeight, neuron->getWeight(iWeight) + dw);
@@ -598,9 +612,9 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
                             neuron->getAdditionalData()->getdThresholdLastCycle());
         }
 
-        // Reverse the sign of dw, becuase we want to maximaze S
-        // thus cannot use the negative sign used in minimizing E.
-        dThreshold *= -1;
+        //// Reverse the sign of dw, becuase we want to maximaze S
+        //// thus cannot use the negative sign used in minimizing E.
+        //dThreshold *= -1;
 
         // Update weight
         neuron->setThreshold(neuron->getThreshold() + dThreshold);

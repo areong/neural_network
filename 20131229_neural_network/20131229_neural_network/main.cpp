@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
     FileReader *fileReader = new FileReader();
     Data *dataTrain = new Data();
-    fileReader->setNumLineToRead(200);
+    fileReader->setNumLineToRead(10000);
     fileReader->read(fileNameTrain, dataTrain);
 
     //for (int i = 0; i < dataTrain->getNumItems(); i++)
