@@ -12,6 +12,11 @@ public:
     ~Experiment();
 
     void setNFoldCrossValidation(int fold);
+    void setNeuralNetworkParameters(int numInput, int numOutput);
+    void setExperimentParameters(int numHiddenStart, int numHiddenEnd,
+                                 int patienceBase, int patienceMultiplyStart, int patienceMultiplyEnd,
+                                 int numBigTrainingCyclesAddHiddenStart, int numBigTrainingCyclesAddHiddenEnd, int numBigTrainingCyclesAddHiddenIncr,
+                                 int numTimesEachParameter);
     void setTrainingData(Data *dataTraining);
     void execute();
 
@@ -20,6 +25,19 @@ private:
     double calculateCorrectRate(int indexFold);
 
     int numFold;
+
+    int numInput;
+    int numOutput;
+
+    int numHiddenStart;
+    int numHiddenEnd;
+    int patienceBase;
+    int patienceMultiplyStart;
+    int patienceMultiplyEnd;
+    int numBigTrainingCyclesAddHiddenStart;
+    int numBigTrainingCyclesAddHiddenEnd;
+    int numBigTrainingCyclesAddHiddenIncr;
+    int numTimesEachParameter;
 
     CascadeCorrelationNeuralNetwork *network;
     Data *dataTraining;

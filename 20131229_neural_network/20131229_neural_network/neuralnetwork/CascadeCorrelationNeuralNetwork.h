@@ -26,6 +26,7 @@ public:
         or it needs to add another hidden layer.
      */
     void setPatience(int numTrainingCycles);
+    void setNumBigTrainingCyclesAddHidden(int numBigTrainingCyclesAddHidden);
     void setTrainingData(Data *trainingData);
     void run();
 
@@ -64,6 +65,8 @@ private:
      */
     int numTrainingCycles;
     int patience;
+
+    int numBigTrainingCyclesAddHidden;
 
     Data *trainingData;
     int currentIndexTrainingData;

@@ -23,6 +23,11 @@ int main(int argc, char *argv[]) {
 
     Experiment *experiment = new Experiment();
     experiment->setNFoldCrossValidation(5);
+    experiment->setNeuralNetworkParameters(12810, 12);
+    experiment->setExperimentParameters(1, 1,
+                                        4916, 1, 10,
+                                        2, 2, 1,
+                                        3);
     experiment->setTrainingData(dataTrain);
     experiment->execute();
 

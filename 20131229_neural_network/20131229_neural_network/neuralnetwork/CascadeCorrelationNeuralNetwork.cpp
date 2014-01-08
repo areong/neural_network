@@ -15,6 +15,7 @@ CascadeCorrelationNeuralNetwork::CascadeCorrelationNeuralNetwork() {
     maxNumHiddenLayers = 0;
     numTrainingCycles = 0;
     patience = 0;
+    numBigTrainingCyclesAddHidden = 0;
     trainingData = 0;
     currentIndexTrainingData = 0;
     currentIndexTrainingDataForAddingHiddenLayer = 0;
@@ -71,6 +72,10 @@ void CascadeCorrelationNeuralNetwork::setPatience(int numTrainingCycles) {
     patience = numTrainingCycles;
 }
 
+void CascadeCorrelationNeuralNetwork::setNumBigTrainingCyclesAddHidden(int numBigTrainingCyclesAddHidden) {
+    this->numBigTrainingCyclesAddHidden = numBigTrainingCyclesAddHidden;
+}
+
 void CascadeCorrelationNeuralNetwork::setTrainingData(Data *trainingData) {
     this->trainingData = trainingData;
 }
@@ -103,7 +108,7 @@ void CascadeCorrelationNeuralNetwork::run() {
             //cout << "In sample correct rate: " << calculateCorrectRate(trainingData) << endl;
             // If do not reach maximum number of hidden layers.
             if (neuralNetwork->getNumHiddenLayers() < maxNumHiddenLayers) {
-                cout << "                Num hidden layers: " << neuralNetwork->getNumHiddenLayers() << endl;
+                cout << "                        Num hidden layers: " << neuralNetwork->getNumHiddenLayers() << endl;
                 addHiddenLayer();
                 numTrainingCycles = 0;
             }
@@ -429,8 +434,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
         E_o_average->set(i, E_o_average->get(i) / trainingData->getNumItems());
 
     // For number of big training cycles.
-    int numBigTrainingCycles = 2;
-    for (int iBigCycle = 0; iBigCycle < numBigTrainingCycles; iBigCycle++) {
+    for (int iBigCycle = 0; iBigCycle < numBigTrainingCyclesAddHidden; iBigCycle++) {
         // Clear V_p and V_average.
         V_p->clear();
         V_average = 0;
@@ -482,7 +486,7 @@ void CascadeCorrelationNeuralNetwork::addHiddenLayer() {
             //cout << "j: " << j << ", innerSum: " << innerSum << endl;
         }
 
-        cout << "                Big cycle: " << iBigCycle << ", S: " << S << endl;
+        cout << "                        Big cycle: " << iBigCycle << ", S: " << S << endl;
 
         // Update weights of the new Neuron.
         // Code is a little bit similar to 
