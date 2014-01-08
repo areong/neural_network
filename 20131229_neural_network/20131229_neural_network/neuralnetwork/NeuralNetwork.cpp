@@ -12,13 +12,15 @@ NeuralNetwork::~NeuralNetwork() {
     for (int i = 0; i < inputLayer->getLength(); i++)
         delete inputLayer->get(i);
     delete inputLayer;
+
     // Delete output neurons.
     for (int i = 0; i < outputLayer->getLength(); i++)
         delete outputLayer->get(i);
     delete outputLayer;
+
     // Delete hidden neurons and layers.
     for (int i = 0; i < hiddenLayers->getLength(); i++)
-        for (int j = 0; j < hiddenLayers->get(i)->getLength(); i++)
+        for (int j = 0; j < hiddenLayers->get(i)->getLength(); j++)
             delete hiddenLayers->get(i)->get(j);
     for (int i = 0; i < hiddenLayers->getLength(); i++)
         delete hiddenLayers->get(i);
@@ -66,7 +68,8 @@ int NeuralNetwork::getNumOutputNeurons() {
 }
 
 void NeuralNetwork::increaseHiddenLayer() {
-    hiddenLayers->add(new List<Neuron *>());
+    List<Neuron *> *newLayer = new List<Neuron *>();
+    hiddenLayers->add(newLayer);
 }
 
 void NeuralNetwork::addHiddenNeuron(int indexLayer, Neuron *neuron) {

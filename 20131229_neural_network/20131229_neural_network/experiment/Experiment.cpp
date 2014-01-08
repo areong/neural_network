@@ -85,15 +85,17 @@ void Experiment::execute() {
                         network->setTrainingData(dataValidationTrain->get(iFold));
                         //cout << "    network initialization complete" << endl;
                         cout << "                    sec: " << clock() / (float)CLOCKS_PER_SEC
-                                << " run" << endl;
+                             << " run" << endl;
                         network->run();
                         //cout << "    run complete" << endl;
                         cout << "                    sec: " << clock() / (float)CLOCKS_PER_SEC
-                                << " run finish" << endl;
+                             << " run finish" << endl;
                         double correct_in = network->calculateCorrectRate(dataValidationTrain->get(iFold));
                         double correct_out = calculateCorrectRate(iFold);
                         cout << "                    Correct_in  = " << correct_in << endl;
                         cout << "                    Correct_out = " << correct_out << endl;
+
+                        delete network;
 
                         //inAverage += correct_in;
                         //outAverage += correct_out;
